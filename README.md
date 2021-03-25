@@ -1,5 +1,4 @@
 # Bash setup script for Ubuntu servers
-[![Build Status](https://travis-ci.org/jasonheecs/ubuntu-server-setup.svg?branch=master)](https://travis-ci.org/jasonheecs/ubuntu-server-setup)
 
 This is a setup script to automate the setup and provisioning of Ubuntu servers. It does the following:
 * Adds a new user account with sudo access
