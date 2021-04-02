@@ -128,7 +128,7 @@ function configureNTP() {
 function getPhysicalMemory() {
     local phymem
     phymem="$(free -g|awk '/^Mem:/{print $2}')"
-    
+
     if [[ ${phymem} == '0' ]]; then
         echo 1
     else

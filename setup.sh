@@ -9,7 +9,6 @@ function getCurrentDir() {
 }
 
 function includeDependencies() {
-    # shellcheck source=./setupLibrary.sh
     source "${current_dir}/setupLibrary.sh"
 }
 
@@ -19,13 +18,13 @@ output_file="output.log"
 
 function main() {
     read -rp "Enter the username of the new user account:" username
-
     promptForPassword
+    read -s -rp "Enter new docker password:" dockerPassword
 
     # Run setup functions
     trap cleanup EXIT SIGHUP SIGINT SIGTERM
 
-    addUserAccount "${username}" "${password}"
+    addUserAccount "${username}" "${password}" true
 
     read -rp $'Paste in the public SSH key for the new user:\n' sshKey
     echo 'Running setup script...'
@@ -47,6 +46,19 @@ function main() {
     configureNTP
 
     sudo service ssh restart
+
+    echo "Done installing Network Time Protocol. " >&3
+
+    echo "Installing Docker... " >&3
+    sudo apt-get update -y
+    addUserAccount docker "${dockerPassword}" true
+    curl -fsSL https://get.docker.com -o get-docker.sh
+    sudo sh get-docker.sh
+    sudo usermod -aG docker docker
+    rm get-docker.sh
+    sudo curl -L "https://github.com/docker/compose/releases/download/1.28.6/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+    sudo chmod +x /usr/local/bin/docker-compose
+    echo "Done Installing Docker." >&3
 
     cleanup
 
